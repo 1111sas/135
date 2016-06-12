@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+	<head lang="en">
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<link rel="stylesheet" href="http://cdn.amazeui.org/amazeui/2.6.2/css/amazeui.min.css">
+
+		<title></title>
+	</head>
+
+	<body>
+		<header style="height: 40px;background-color: cornflowerblue;padding: 0;margin: 0;"></header>
+		<div id="father-div" style="background-color: blue;overflow: hidden">
+			<section class="scroll-section" id="section01" style="background-color: yellow;">
+				<img src="img/test01.jpg" />
+			</section>
+			<section class="scroll-section" id="section02" style="background-color: green;">
+				<img src="img/test02.jpg" />
+			</section>
+			<section class="scroll-section" id="section03" style="background-color: grayyellow;">
+				<img src="img/test03.jpg" />
+			</section>
+			<section class="scroll-section" id="section04" style="background-color: pink">
+				<img src="img/test04.jpg" />
+			</section>
+		</div>
+	</body>
+	<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+	<script>
+		var senctionID = 0;
+		var senctionArray = $('.scroll-section');
+		var isScrolling=false;
+		//项目加载完成后运行的项目
+		$(document).ready(function() {
+			adjustFatherDiv();
+			adjustSenctions();
+			setListenner();
+		});
+		//让父div铺满除了header以外剩余的空间
+		function adjustFatherDiv() {
+			var window_height = $(window).innerHeight();
+			var header_height = $('header').innerHeight();
+			$('#father-div').height(window_height - header_height);
+		}
+		//让每个section铺满父div
+		function adjustSenctions() {
+			var father_div_height = $('#father-div').innerHeight();
+			$('.scroll-section').height(father_div_height);
+		}
+		//添加各类监听
+		function setListenner() {
+			scrollListener();
+		}
+		//添加滚轮滑动监听
+		function scrollListener() {
+			$('#father-div').on("mousewheel DOMMouseScroll", function(e) {
+				e.preventDefault();
+				if(isScrolling==false){
+					isScrolling=true;
+				var delta = (e.originalEvent.wheelDelta && (e.originalEvent.wheelDelta > 0 ? 1 : -1)) || // chrome & ie
+					(e.originalEvent.detail && (e.originalEvent.detail > 0 ? -1 : 1)); // firefox
+				JumpToAnotherSection(delta);
+				}
+			});
+		}
+		//根据delta的值跳转到相应的senction，0不动，1上一个，-1下一个
+		function JumpToAnotherSection(delta) {
+			senctionID = senctionID - delta;
+			if (senctionID < 0) {
+				senctionID = 0
+			}
+			if (senctionID > senctionArray.length-1) {
+				senctionID = senctionArray.length-1
+			};
+			$('#father-div').stop().animate({
+				scrollTop:$('#father-div').innerHeight()*senctionID+"px"
+			}, 500,function(){
+				isScrolling=false;
+			})
+		}
+	</script>
+
+</html>
